@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">TicTacToeCompose</string>
+    <string name="un_check_button">-</string>
+    <string name="x_button">x</string>
+    <string name="o_button">o</string>
+
+    <!-- TicTacToeScreen -->
+    <string name="turn_title">It is %s turn</string>
+    <string name="restart_game">Restart</string>
+</resources>
