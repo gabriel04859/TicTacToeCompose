@@ -1,10 +1,7 @@
 package com.gabsa.tictactoecompose.presenter
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.gabsa.tictactoecompose.data.TicTacToeItem
-import com.gabsa.tictactoecompose.data.TicTacToeState
 import com.gabsa.tictactoecompose.presenter.theme.OTurnColor
 import com.gabsa.tictactoecompose.presenter.theme.XTurnColor
 import com.gabsa.tictactoecompose.presenter.utils.Constants.EMPTY
@@ -27,18 +24,8 @@ class TicTacToeViewModel : ViewModel() {
 
     private var isXTurn = true
 
-    private val _state = mutableStateOf(TicTacToeState())
-    val state: State<TicTacToeState> get() = _state
-
-    private val _victorious = mutableStateOf(EMPTY)
-    val victorious get() = _victorious
-
     fun markPlayerAction(positionButton: Int) {
         ticTacToeItems[positionButton].isXPlayer = isXTurn
-    }
-
-    fun getCurrentPlayer(): String {
-        return if (_state.value.isXTurn) X_PLAYER else O_PLAYER
     }
 
     fun checkWinner(): String {
