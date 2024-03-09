@@ -1,6 +1,7 @@
 package com.gabsa.tictactoecompose.presenter.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -45,12 +46,12 @@ class MainActivity : ComponentActivity() {
                         val currentPlayerTurn by viewModel.getCurrentPlayerTurnText()
                             .collectAsState()
                         val winner by viewModel.playerWinner.collectAsState()
+
                         val title = if (winner == null) {
                             if (currentPlayerTurn) "X turn" else "O turn"
                         } else {
                             "$winner is the winner"
                         }
-
                         Text(text = title)
                         LazyVerticalGrid(
                             modifier = Modifier.wrapContentSize(),
@@ -60,17 +61,24 @@ class MainActivity : ComponentActivity() {
                                 TicTacToeButton(index, viewModel)
                             }
                         }
-
                         Button(
                             modifier = Modifier.padding(24.dp),
                             onClick = {
                                 viewModel.resetGame()
                             }) {
-                            Text(text = "Reset game")
+                            Text(text = bottomButtonText(winner))
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun bottomButtonText(winner: String?): String {
+        return if (winner == null) {
+            return "Reset game"
+        } else {
+            "Start another match"
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.gabsa.tictactoecompose.presenter.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -8,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +39,21 @@ fun TicTacToeButton(
     var bgColor by remember {
         mutableStateOf(Purple40)
     }
+
+    val resetGame by viewModel.shouldResetGame.collectAsState()
+
+    if (resetGame) {
+        enable = true
+        bgColor = Purple40
+        text = EMPTY
+
+    }
+
+    val winner by viewModel.playerWinner.collectAsState()
+    if (!winner.isNullOrEmpty()) {
+        enable = false
+    }
+
     Column(
         modifier = Modifier
             .wrapContentSize()

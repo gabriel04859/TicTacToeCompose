@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.gabsa.tictactoecompose.data.TicTacToeItem
 import com.gabsa.tictactoecompose.presenter.theme.OTurnColor
 import com.gabsa.tictactoecompose.presenter.theme.XTurnColor
-import com.gabsa.tictactoecompose.presenter.utils.Constants.EMPTY
 import com.gabsa.tictactoecompose.presenter.utils.Constants.O_PLAYER
 import com.gabsa.tictactoecompose.presenter.utils.Constants.X_PLAYER
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +16,7 @@ class TicTacToeViewModel : ViewModel() {
 
     private val _playerWinner = MutableStateFlow<String?>(null)
 
-    val playerWinner : StateFlow<String?> get() = _playerWinner
+    val playerWinner: StateFlow<String?> get() = _playerWinner
 
     val ticItems = MutableStateFlow(
         mutableListOf(
@@ -33,12 +32,15 @@ class TicTacToeViewModel : ViewModel() {
         )
     )
 
+    val shouldResetGame = MutableStateFlow(false)
+
     private val isXTurn = MutableStateFlow(true)
 
     fun markPlayerAction(positionButton: Int) {
         viewModelScope.launch {
             ticItems.value[positionButton].isXPlayer = isXTurn.value
             checkWinner()
+            shouldResetGame.value = false
         }
     }
 
@@ -51,15 +53,16 @@ class TicTacToeViewModel : ViewModel() {
     fun getCurrentPlayerTurnText() = isXTurn
 
     private fun checkWinner() {
-        val a = ticItems.value.map { it.isXPlayer }
-        Log.d("TAG", "checkWinner: ${a}")
+        val gameBoard = ticItems.value.map { it.isXPlayer }
+        Log.d("checkWinner", "checkWinner: $gameBoard")
         getWinningCombinations().forEach { combination ->
-            if (a[combination.first()] == a[combination[1]] == a[combination[2]]) {
-                if (a.first() == true) {
-                    _playerWinner.value = X_PLAYER
-                } else {
-                    _playerWinner.value = O_PLAYER
-                }
+            val firstItem = gameBoard[combination[0]]
+            val secondItem = gameBoard[combination[1]]
+            val thirdItem = gameBoard[combination[2]]
+
+            if (firstItem != null && firstItem == secondItem && secondItem == thirdItem) {
+                _playerWinner.value = if (firstItem == true) X_PLAYER else O_PLAYER
+                return
             }
         }
     }
@@ -74,5 +77,8 @@ class TicTacToeViewModel : ViewModel() {
 
     fun resetGame() {
         ticItems.value.map { it.isXPlayer = null }
+        isXTurn.value = true
+        _playerWinner.value = null
+        shouldResetGame.value = true
     }
 }
