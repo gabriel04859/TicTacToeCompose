@@ -36,18 +36,14 @@ class TicTacToeViewModel : ViewModel() {
         )
 
         for (combination in winningCombinations) {
-            val symbols = combination.map { mapPlayerActionsToString()[it] }
-            if (symbols.all { it == X_PLAYER }) {
+            val symbols = combination.map { ticTacToeItems[it] }
+            if (symbols.all { it.isXPlayer == true }) {
                 return X_PLAYER
-            } else if (symbols.all { it == O_PLAYER }) {
+            } else if (symbols.all { it.isXPlayer == false }) {
                 return O_PLAYER
             }
         }
         return EMPTY
-    }
-
-    private fun mapPlayerActionsToString(): List<String> {
-        return  ticTacToeItems.map { if (it.isXPlayer == null) EMPTY else if (isXTurn) X_PLAYER else O_PLAYER }
     }
 
     fun provideTicTacToeItems(): MutableList<TicTacToeItem> {
@@ -61,5 +57,4 @@ class TicTacToeViewModel : ViewModel() {
     fun getCurrentTurnText() = if (isXTurn) X_PLAYER else O_PLAYER
 
     fun getColorButton() =  if (isXTurn) XTurnColor else OTurnColor
-
 }
