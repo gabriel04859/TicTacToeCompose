@@ -7,4 +7,6 @@
     <!-- TicTacToeScreen -->
     <string name="turn_title">It is %s turn</string>
     <string name="restart_game">Restart</string>
+    <string name="x_turn">X</string>
+    <string name="o_turn">O</string>
 </resources>

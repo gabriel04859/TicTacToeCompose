@@ -1,5 +1,6 @@
 package com.gabsa.tictactoecompose.presenter.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -8,12 +9,14 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gabsa.tictactoecompose.presenter.TicTacToeViewModel
@@ -21,14 +24,36 @@ import com.gabsa.tictactoecompose.presenter.theme.Purple40
 import com.gabsa.tictactoecompose.presenter.utils.Constants.EMPTY
 
 @Composable
-fun TicTacToeButton(position: Int, viewModel: TicTacToeViewModel, message: (String) -> Unit) {
+fun TicTacToeButton(
+    position: Int,
+    viewModel: TicTacToeViewModel = TicTacToeViewModel()
+) {
     var text by remember {
         mutableStateOf(EMPTY)
+    }
+
+    var enable by remember {
+        mutableStateOf(true)
     }
 
     var bgColor by remember {
         mutableStateOf(Purple40)
     }
+
+    val resetGame by viewModel.shouldResetGame.collectAsState()
+
+    if (resetGame) {
+        enable = true
+        bgColor = Purple40
+        text = EMPTY
+
+    }
+
+    val winner by viewModel.playerWinner.collectAsState()
+    if (!winner.isNullOrEmpty()) {
+        enable = false
+    }
+
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -42,18 +67,24 @@ fun TicTacToeButton(position: Int, viewModel: TicTacToeViewModel, message: (Stri
                 viewModel.markPlayerAction(position)
                 text = viewModel.getCurrentTurnText()
                 bgColor = viewModel.getColorButton()
-                if (viewModel.checkWinner() != EMPTY) {
-                    message.invoke(viewModel.checkWinner())
-                }
-                viewModel.setCurrentTurn()
+                enable = false
             },
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = bgColor,
-                contentColor = Color.White
-            )
+                contentColor = Color.White,
+                disabledContainerColor = bgColor,
+                disabledContentColor = Color.Black
+            ),
+            enabled = enable
         ) {
             Text(text = text, fontSize = 50.sp)
         }
     }
+}
+
+@Composable
+@Preview
+fun TicTacToeButtonPreview() {
+    TicTacToeButton(0)
 }
